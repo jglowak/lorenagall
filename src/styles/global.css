@@ -206,8 +206,23 @@ a:hover { color: var(--link-hover); }
 .kid-book { padding-block: 2.5rem; border-top: 1px solid #000; }
 .kid-book:first-of-type { border-top: 0; }
 .kid-book h2 { text-align: center; }
+/* Flip: una sola imagen que gira y muestra la contratapa (solo mouse). En táctil/mobile: tapa y contratapa apiladas. */
+.flip { margin-block: 1.5rem; }
+.flip-inner { display: grid; gap: 1rem; }
+.flip-face { width: 100%; height: auto; }
+.flip-hint { display: none; }
+@media (min-width: 40rem) { .flip-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; } }
+@media (hover: hover) and (pointer: fine) and (min-width: 40rem) {
+  .flip { perspective: 1600px; width: min(100%, 40rem); margin-inline: auto; position: relative; }
+  .flip:focus-visible { outline-offset: 6px; }
+  .flip-inner { position: relative; display: block; aspect-ratio: 670 / 456; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1); }
+  .flip:hover .flip-inner, .flip:focus-visible .flip-inner { transform: rotateY(180deg); }
+  .flip-face { position: absolute; inset: 0; height: 100%; object-fit: cover; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 4px; box-shadow: 0 6px 20px rgb(0 0 0 / 0.18); }
+  .flip-back { transform: rotateY(180deg); }
+  .flip-hint { display: block; text-align: center; font-size: 0.8125rem; color: var(--muted); margin: 0.75rem 0 0; }
+}
 .kid-covers { display: grid; gap: 1rem; margin-block: 1.5rem; }
-@media (min-width: 40rem) { .kid-covers { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 1.5rem; } .kid-covers--one { max-width: 28rem; margin-inline: auto; } }
+@media (min-width: 40rem) { .kid-covers { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 1.5rem; } .kid-covers--one { max-width: 40rem; margin-inline: auto; } }
 .kid-book .downloads { padding-block: 1rem; }
 .kid-book .downloads h3 { margin-bottom: 1rem; }
 

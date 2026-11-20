@@ -44,11 +44,21 @@ const ld = await Promise.all(
       return (
         <section class="kid-book" id={l.anchor} aria-labelledby={`t-${l.anchor}`}>
           <h2 id={`t-${l.anchor}`}>{l.titulo}</h2>
-          <div class:list={['kid-covers', { 'kid-covers--one': l.imagenes.length === 1 }]}>
-            {l.imagenes.map((img) => (
-              <Image src={img.src} alt={img.alt} widths={[400, 640, 800]} sizes="(min-width: 40rem) 45vw, 92vw" loading="lazy" />
-            ))}
-          </div>
+          {l.imagenes.length === 2 ? (
+            <div class="flip" role="group" aria-label={`Tapa y contratapa de ${label}. Con el mouse, pasá el cursor por encima para ver la contratapa.`}>
+              <div class="flip-inner">
+                <Image class="flip-face flip-front" src={l.imagenes[0].src} alt={l.imagenes[0].alt} widths={[480, 640, 670]} sizes="(min-width: 40rem) 40rem, 92vw" loading="lazy" />
+                <Image class="flip-face flip-back" src={l.imagenes[1].src} alt={l.imagenes[1].alt} widths={[480, 640, 670]} sizes="(min-width: 40rem) 40rem, 92vw" loading="lazy" />
+              </div>
+              <p class="flip-hint" aria-hidden="true">Pasá el mouse para ver la contratapa</p>
+            </div>
+          ) : (
+            <div class="kid-covers kid-covers--one">
+              {l.imagenes.map((img) => (
+                <Image src={img.src} alt={img.alt} widths={[480, 640, 800]} sizes="(min-width: 40rem) 40rem, 92vw" loading="lazy" />
+              ))}
+            </div>
+          )}
           <div class="downloads">
             <h3>Descargá aquí el libro</h3>
             <Descargas titulo={label} descargas={l.descargas} />
@@ -62,3 +72,13 @@ const ld = await Promise.all(
     Estas obras están bajo una <a rel="license noopener" href={LICENSE.href} target="_blank">Licencia {LICENSE.name}</a>.
   </p>
 </Base>
+
+<script>
+  // El flip se activa solo con mouse (hover + puntero fino). En ese caso la tarjeta pasa a ser
+  // enfocable con teclado (Tab) para poder ver la contratapa; en táctil no hay parada de Tab extra.
+  const mq = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 40rem)');
+  const cards = document.querySelectorAll<HTMLElement>('.flip');
+  const sync = () => cards.forEach((c) => (mq.matches ? c.setAttribute('tabindex', '0') : c.removeAttribute('tabindex')));
+  sync();
+  mq.addEventListener('change', sync);
+</script>
