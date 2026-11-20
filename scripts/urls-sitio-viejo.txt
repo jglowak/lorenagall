@@ -1,0 +1,24 @@
+# URLs del sitemap del WordPress anterior (https://lorenagall.com.ar/sitemap_index.xml, 2026-11).
+# Una ruta por línea. El script verify-urls también suma las del export XML si ./migracion/*.xml existe.
+/
+/falsa-coral/
+/rapaz/
+/infantil/
+/resenas/
+/contacto/
+/test/
+/cortes-por-julian-marcel/
+/falsa-coral-por-melina-dorfman/
+/falsa-coral-por-andres-tejada/
+/category/resenas/
+/download/el-dragon-sin-fuego/
+/download/hachazo/
+/download/guiso-de-conejo/
+/download/faslsa-coral/
+/download/falsa-coral-epub/
+/download/falsa-coral-mobi/
+/download/rapaz-pdf/
+/download/rapaz-epub/
+/download/rapaz-mobi/
+/home/
+/sitemap_index.xml
