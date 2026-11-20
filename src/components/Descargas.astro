@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+import { tamano } from '../lib/descargas';
+import type { Descarga } from '../data/libros';
+interface Props { titulo: string; descargas: Descarga[] }
+const { titulo, descargas } = Astro.props;
+---
+<ul class="dl-list">
+  {descargas.map((d) => (
+    <li class="dl-item">
+      <a class="btn btn-block" href={`/descargas/${d.file}`} download aria-label={`Descargar ${titulo} en formato ${d.formato.toUpperCase()}, ${tamano(d.file)}`}>
+        <Icon name="download" />Descargar
+      </a>
+      <small>{titulo} - .{d.formato} / {tamano(d.file)}</small>
+    </li>
+  ))}
+</ul>

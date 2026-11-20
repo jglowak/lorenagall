@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import LibroFicha from '../components/LibroFicha.astro';
+import { falsaCoral } from '../data/libros';
+import { bookLd, ogImage } from '../lib/seo';
+
+const path = Astro.url.pathname;
+const description = 'Situada en Barcelona, Falsa coral cuenta la historia de Elena, una joven argentina que, en el año 2002, viaja a España, escapando de la crisis económica de su país.';
+const img = falsaCoral.imagenes[0];
+const og = await ogImage(img.src, img.alt);
+---
+<Base
+  title="Falsa coral - Lorena Gall"
+  description={description}
+  type="article"
+  image={img}
+  jsonLd={[bookLd({ ...falsaCoral, path, imageUrl: og.url, description })]}
+>
+  <LibroFicha libro={falsaCoral} />
+</Base>

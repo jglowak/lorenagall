@@ -1,0 +1,31 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { personLd, websiteLd } from '../lib/seo';
+import foto from '../assets/autora/lorena-gall.jpg';
+
+const description = 'Lorena Inés Gall nació en Santa Fe, Argentina, en 1976. Publicó las novelas Rapaz y Falsa coral, los libros para chicos El dragón sin fuego, Guiso de conejo y la nouvelle juvenil Hachazo.';
+---
+<Base title="Lorena Gall - Escritora" description={description} jsonLd={[websiteLd(), personLd()]}>
+  <div class="narrow page bio">
+    <h1>Escritora</h1>
+    <hr class="rule" />
+    <h2>Bio</h2>
+    <p>
+      Lorena Inés Gall nació en Santa Fe, Argentina, en 1976. Publicó las novelas <em><a href="/rapaz/">Rapaz</a></em> (Laguna Negra, 2019) y <em><a href="/falsa-coral/">Falsa coral</a></em> (Alción, 2022); los libros para chicos <em><a href="/infantil/">El dragón sin fuego</a></em> (15 y 15, 2016), <em><a href="/infantil/">Guiso de conejo</a></em> (15 y 15, 2019) y la nouvelle juvenil <em><a href="/infantil/">Hachazo</a></em> (Ensayo y error, 2019).
+    </p>
+    <figure class="bio-photo">
+      <Image src={foto} alt="Lorena Gall con sombrero gris y camisa amarilla, sentada en una reposera" width={350} height={350} widths={[220, 350, 700]} sizes="(min-width: 24rem) 350px, 90vw" loading="eager" fetchpriority="high" />
+      <figcaption>Foto: Federico Gall</figcaption>
+    </figure>
+    <p>
+      Trabajó en producción de cine, guionó y dirigió cortos y los mediometrajes <em>Inocente y vano </em>(2006) y <em>El fantasma de Reiko</em> (2008). Es docente en la Universidad Nacional de las Artes, y de Lengua y Literatura en colegios secundarios de la provincia de Buenos Aires, en donde vive, con su esposo e hijos.
+    </p>
+    <ul class="booklinks">
+      <li><a href="/rapaz/"><Icon name="book" />Rapaz</a></li>
+      <li><a href="/falsa-coral/"><Icon name="book" />Falsa coral</a></li>
+      <li><a href="/infantil/"><Icon name="book" />Infantil</a></li>
+    </ul>
+  </div>
+</Base>

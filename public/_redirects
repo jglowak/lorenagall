@@ -1,0 +1,24 @@
+# Redirecciones 301 desde URLs del WordPress anterior (Workers static assets: _redirects).
+# Páginas / posts viejos
+/test/                       /                 301
+/test                        /                 301
+/home/                       /                 301
+/home                        /                 301
+/category/resenas/           /resenas/         301
+/category/resenas            /resenas/         301
+
+# Sitemaps viejos (RankMath)
+/sitemap_index.xml           /sitemap-index.xml 301
+/sitemap.xml                 /sitemap-index.xml 301
+/wp-sitemap.xml              /sitemap-index.xml 301
+
+# Páginas de descarga de WP Download Manager -> archivo directo
+/download/el-dragon-sin-fuego/   /descargas/el-dragon-sin-fuego.pdf       301
+/download/hachazo/               /descargas/hachazo.pdf                   301
+/download/guiso-de-conejo/       /descargas/guiso-de-conejo.pdf           301
+/download/faslsa-coral/          /descargas/falsa-coral-lorena-gall.pdf   301
+/download/falsa-coral-epub/      /descargas/falsa-coral-lorena-gall.epub  301
+/download/falsa-coral-mobi/      /descargas/falsa-coral-lorena-gall.mobi  301
+/download/rapaz-pdf/             /descargas/rapaz-lorena-gall.pdf         301
+/download/rapaz-epub/            /descargas/rapaz-lorena-gall.epub        301
+/download/rapaz-mobi/            /descargas/rapaz-lorena-gall.mobi        301

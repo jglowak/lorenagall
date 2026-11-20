@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from '../lib/icons';
+interface Props { url: string; title: string }
+const { url, title } = Astro.props;
+const u = encodeURIComponent(url);
+const t = encodeURIComponent(title);
+const links: { id: IconName; label: string; href: string }[] = [
+  { id: 'facebook', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${u}` },
+  { id: 'x', label: 'X', href: `https://twitter.com/intent/tweet?url=${u}&text=${t}` },
+  { id: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/?text=${t}%20${u}` },
+  { id: 'telegram', label: 'Telegram', href: `https://t.me/share/url?url=${u}&text=${t}` },
+];
+---
+<section class="share">
+  <h2>Compartir en:</h2>
+  <ul>
+    {links.map((l) => (
+      <li>
+        <a href={l.href} target="_blank" rel="noopener noreferrer" aria-label={`Compartir "${title}" en ${l.label} (se abre en una pestaña nueva)`}>
+          <Icon name={l.id} />
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

@@ -1,0 +1,35 @@
+---
+import Nav from './Nav.astro';
+import Icon from './Icon.astro';
+import { SITE_NAME } from '../data/site';
+const current = Astro.url.pathname;
+---
+<header class="header">
+  <a class="logo" href="/" aria-label={`${SITE_NAME}, ir al inicio`}>{SITE_NAME}</a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu-principal" aria-label="Menú">
+    <Icon name="menu" class="i-open" />
+    <Icon name="close" class="i-close" />
+  </button>
+  <Nav label="Principal" id="menu-principal" current={current} />
+</header>
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.nav-toggle');
+  const nav = document.getElementById('menu-principal');
+  if (btn && nav) {
+    const mq = window.matchMedia('(max-width: 47.9375rem)');
+    const set = (open: boolean, focusBtn = false) => {
+      btn.setAttribute('aria-expanded', String(open));
+      nav.dataset.open = String(open);
+      if (!open && focusBtn) btn.focus();
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') set(false, true);
+    });
+    document.addEventListener('click', (e) => {
+      if (btn.getAttribute('aria-expanded') === 'true' && !nav.contains(e.target as Node) && !btn.contains(e.target as Node)) set(false);
+    });
+    // Al salir del breakpoint móvil, el menú vuelve a su estado base.
+    mq.addEventListener('change', () => set(false));
+  }
+</script>

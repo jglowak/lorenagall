@@ -1,0 +1,64 @@
+---
+import { Image, getImage } from 'astro:assets';
+import fondo from '../assets/libros/falsa-coral-fondo.jpg';
+import Descargas from './Descargas.astro';
+import Share from './Share.astro';
+import { LICENSE } from '../data/site';
+import { abs } from '../lib/seo';
+import type { Libro } from '../data/libros';
+
+interface Props { libro: Libro & { fragmento?: string[] } }
+const { libro } = Astro.props;
+const [portada, ...extras] = libro.imagenes;
+const shareUrl = abs(Astro.url.pathname);
+const pink = libro.id === 'falsa-coral';
+const art = pink ? (await getImage({ src: fondo, width: 560, format: 'webp' })).src : undefined;
+---
+<div class:list={['book-hero', { 'book-hero--plain': !pink }]}>
+  <div class="wrap book-grid book-grid--center">
+    <div class:list={['book-cover', { 'book-cover--art': pink }]} style={art ? `--art:url(${art})` : undefined}>
+      <Image src={portada.src} alt={portada.alt} widths={[320, 480, 640]} sizes="(min-width: 56rem) 22rem, 90vw" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="book-info">
+      <h1>{libro.titulo}</h1>
+      {libro.sinopsis.map((p) => <p set:html={p} />)}
+      {libro.fragmento && (
+        <>
+          <hr />
+          <blockquote>
+            {libro.fragmento.map((p) => <p>{p}</p>)}
+          </blockquote>
+        </>
+      )}
+    </div>
+  </div>
+</div>
+
+{extras.map((img) => (
+  <div class="extra-image-band">
+    <div class="extra-image">
+      <Image src={img.src} alt={img.alt} widths={[480, 720, 900]} sizes="(min-width: 40rem) 37.5rem, 92vw" loading="lazy" />
+    </div>
+  </div>
+))}
+
+<section class="downloads wrap" aria-labelledby="descargas-titulo">
+  <h2 id="descargas-titulo">Descargá el libro acá</h2>
+  <p class="sub">Elegí el formato y descargalo gratis</p>
+  <Descargas titulo={libro.titulo} descargas={libro.descargas} />
+</section>
+
+<Share url={shareUrl} title={`${libro.titulo}, de Lorena Gall`} />
+
+{libro.comprar && (
+  <section class="buy wrap" aria-labelledby="comprar-titulo">
+    <h2 id="comprar-titulo">Conseguí el libro físico en {libro.comprar.editorial}</h2>
+    <a class="btn btn-block" href={libro.comprar.url} target="_blank" rel="noopener noreferrer">
+      Comprar<span class="sr-only"> {libro.titulo} en {libro.comprar.editorial} (se abre en una pestaña nueva)</span>
+    </a>
+  </section>
+)}
+
+<p class="license">
+  Esta obra está bajo una <a rel="license noopener" href={LICENSE.href} target="_blank">Licencia {LICENSE.name}</a>.
+</p>

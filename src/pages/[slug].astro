@@ -1,0 +1,49 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { todasLasResenas, esExterna, fechaLarga, type Resena } from '../lib/resenas';
+import { abs } from '../lib/seo';
+
+export async function getStaticPaths() {
+  const propias = (await todasLasResenas()).filter((r) => !esExterna(r));
+  return propias.map((r) => ({ params: { slug: r.id }, props: { resena: r } }));
+}
+
+interface Props { resena: Resena }
+const { resena } = Astro.props;
+const { titulo, autor, fecha, libro, resumen } = resena.data;
+const { Content } = await render(resena);
+const url = abs(Astro.url.pathname);
+
+const ld = [
+  {
+    '@type': 'Review',
+    '@id': url + '#resena',
+    url,
+    name: titulo,
+    inLanguage: 'es-AR',
+    author: { '@type': 'Person', name: autor },
+    ...(fecha ? { datePublished: fecha.toISOString().slice(0, 10) } : {}),
+    reviewBody: resumen,
+    itemReviewed: { '@type': 'Book', name: libro, author: { '@id': abs('/#autora') } },
+    publisher: { '@id': abs('/#sitio') },
+  },
+];
+---
+<Base title={`${titulo} - Lorena Gall`} description={resumen} type="article" publishedTime={fecha} jsonLd={ld}>
+  <article>
+    <header class="review-head wrap">
+      <h1>{titulo}</h1>
+      <ul class="byline">
+        <li><Icon name="tag" /><a href="/resenas/">Reseñas</a></li>
+        {fecha && <li><Icon name="calendar" /><time datetime={fecha.toISOString().slice(0, 10)}>{fechaLarga(fecha)}</time></li>}
+        <li><Icon name="pen" /><span><span class="sr-only">Autor: </span>{autor}</span></li>
+      </ul>
+    </header>
+    <div class="review-body" lang="es-AR">
+      <Content />
+    </div>
+  </article>
+  <p class="back-link"><a href="/resenas/">← Volver a las reseñas</a></p>
+</Base>

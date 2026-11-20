@@ -1,0 +1,14 @@
+---
+import { NAV } from '../data/site';
+interface Props { label: string; id?: string; current: string }
+const { label, id, current } = Astro.props;
+const here = current.replace(/\/+$/, '') || '/';
+const isCurrent = (href: string) => (href.replace(/\/+$/, '') || '/') === here;
+---
+<nav class="nav" aria-label={label} id={id} data-open="false">
+  <ul>
+    {NAV.map((i) => (
+      <li><a href={i.href} aria-current={isCurrent(i.href) ? 'page' : undefined}>{i.label}</a></li>
+    ))}
+  </ul>
+</nav>

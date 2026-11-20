@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import Descargas from '../components/Descargas.astro';
+import Share from '../components/Share.astro';
+import { infantiles, infantilIntro } from '../data/libros';
+import { LICENSE } from '../data/site';
+import { abs, bookLd, ogImage } from '../lib/seo';
+import foto1 from '../assets/infantil/trabajo-en-familia-1.jpg';
+import foto2 from '../assets/infantil/trabajo-en-familia-2.jpg';
+
+const description = 'Trabajo en familia es un proyecto de creación conjunta de libros para chicos entre una mamá que escribe y una hija que dibuja.';
+const altFoto = 'Lorena Gall con una niña, ambas sonriendo, frente a un fondo de vegetación';
+const ld = await Promise.all(
+  infantiles.map(async (l) =>
+    bookLd({ ...l, path: `/infantil/#${l.anchor}`, imageUrl: (await ogImage(l.imagenes[0].src, l.imagenes[0].alt)).url, illustrator: 'Genoveva Lojo Gall' }),
+  ),
+);
+---
+<Base title="Infantil - Lorena Gall" description={description} type="article" image={{ src: foto1, alt: altFoto }} jsonLd={ld}>
+  <div class="wrap page">
+    <h1 class="center">{infantilIntro.titulo}</h1>
+    <ul class="index-links">
+      {infantiles.map((l) => <li><a href={`#${l.anchor}`}><Icon name="book" />{l.titulo === 'El Dragón Sin Fuego' ? 'El dragón sin fuego' : l.titulo}</a></li>)}
+    </ul>
+    <hr class="rule" />
+
+    <figure class="family">
+      <div class="family-photos">
+        <Image src={foto1} alt={altFoto} widths={[400, 500, 800]} sizes="(min-width: 40rem) 45vw, 92vw" loading="eager" />
+        <Image src={foto2} alt="Lorena Gall y una niña sonriendo, mirándose, frente a un fondo de vegetación" widths={[400, 500, 800]} sizes="(min-width: 40rem) 45vw, 92vw" loading="lazy" />
+      </div>
+      <figcaption>Foto: Federico Gall</figcaption>
+    </figure>
+
+    <div class="family-text">
+      {infantilIntro.parrafos.map((p) => <p set:html={p} />)}
+    </div>
+    <hr class="rule" />
+
+    {infantiles.map((l) => {
+      const label = l.titulo === 'El Dragón Sin Fuego' ? 'El dragón sin fuego' : l.titulo;
+      return (
+        <section class="kid-book" id={l.anchor} aria-labelledby={`t-${l.anchor}`}>
+          <h2 id={`t-${l.anchor}`}>{l.titulo}</h2>
+          <div class:list={['kid-covers', { 'kid-covers--one': l.imagenes.length === 1 }]}>
+            {l.imagenes.map((img) => (
+              <Image src={img.src} alt={img.alt} widths={[400, 640, 800]} sizes="(min-width: 40rem) 45vw, 92vw" loading="lazy" />
+            ))}
+          </div>
+          <div class="downloads">
+            <h3>Descargá aquí el libro</h3>
+            <Descargas titulo={label} descargas={l.descargas} />
+          </div>
+          <Share url={abs(`/infantil/#${l.anchor}`)} title={`${label}, de Lorena Gall`} />
+        </section>
+      );
+    })}
+  </div>
+  <p class="license">
+    Estas obras están bajo una <a rel="license noopener" href={LICENSE.href} target="_blank">Licencia {LICENSE.name}</a>.
+  </p>
+</Base>

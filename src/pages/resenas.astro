@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { todasLasResenas, esExterna, credito } from '../lib/resenas';
+
+const resenas = await todasLasResenas();
+const description = 'Reseñas y notas sobre los libros de Lorena Gall: Rapaz, Falsa coral y El dragón sin fuego.';
+---
+<Base title="Reseñas - Lorena Gall" description={description}>
+  <div class="narrow page">
+    <h1 class="center">Reseñas</h1>
+    <hr class="rule" />
+    <ul class="reviews">
+      {resenas.map((r) => {
+        const ext = esExterna(r);
+        const href = ext ? r.data.url! : `/${r.id}/`;
+        return (
+          <li class="review-card">
+            <Icon name="pen" class="review-icon" />
+            <p class="quote">{r.data.resumen}</p>
+            <a class="read" href={href} {...(ext ? { target: '_blank', rel: 'noopener' } : {})}>
+              Leer la nota<span class="sr-only"> «{r.data.titulo}»{ext ? ' (sitio externo, se abre en una pestaña nueva)' : ''}</span>
+            </a>
+            <p class="review-meta">{credito(r)}</p>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+</Base>

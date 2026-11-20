@@ -1,0 +1,154 @@
+---
+import Base from '../layouts/Base.astro';
+import { PUBLIC_TURNSTILE_SITEKEY } from 'astro:env/client';
+
+const description = 'Escribile a la escritora Lorena Gall: completá el formulario de contacto con tu nombre, tu email y tu mensaje.';
+---
+<Base title="Contacto - Lorena Gall" description={description}>
+  {PUBLIC_TURNSTILE_SITEKEY && <script slot="head" is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+  <div class="wrap page">
+    <h1 class="center">Contacto</h1>
+    <hr class="rule" />
+
+    <noscript><p class="noscript-note">Para enviar el mensaje necesitás activar JavaScript en tu navegador.</p></noscript>
+
+    <form class="form" id="form-contacto" method="post" action="/api/contacto" novalidate>
+      <div class="field">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" type="text" required maxlength="100" autocomplete="name" aria-describedby="err-nombre" />
+        <p class="field-error" id="err-nombre" hidden></p>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required maxlength="254" autocomplete="email" inputmode="email" aria-describedby="err-email" />
+        <p class="field-error" id="err-email" hidden></p>
+      </div>
+      <div class="field">
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" required minlength="5" maxlength="5000" rows="7" aria-describedby="err-mensaje"></textarea>
+        <p class="field-error" id="err-mensaje" hidden></p>
+      </div>
+
+      <!-- Honeypot: oculto para personas; los bots suelen completarlo. -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">No completar este campo</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      {PUBLIC_TURNSTILE_SITEKEY && (
+        <div class="turnstile"><div class="cf-turnstile" data-sitekey={PUBLIC_TURNSTILE_SITEKEY} data-language="es" data-theme="light"></div></div>
+      )}
+
+      <div class="form-actions">
+        <button class="btn btn-block" type="submit" id="btn-enviar">Enviar</button>
+      </div>
+      <div class="form-status" id="form-status" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div class="form-status" id="form-error" role="alert" aria-atomic="true"></div>
+    </form>
+  </div>
+</Base>
+
+<script>
+  declare global {
+    interface Window { turnstile?: { reset: () => void } }
+  }
+
+  const form = document.querySelector<HTMLFormElement>('#form-contacto')!;
+  const btn = document.querySelector<HTMLButtonElement>('#btn-enviar')!;
+  const statusEl = document.querySelector<HTMLElement>('#form-status')!;
+  const errorEl = document.querySelector<HTMLElement>('#form-error')!;
+  const FIELDS = ['nombre', 'email', 'mensaje'] as const;
+
+  const setStatus = (state: 'sending' | 'ok' | '', msg = '') => {
+    statusEl.textContent = msg;
+    state ? statusEl.setAttribute('data-state', state) : statusEl.removeAttribute('data-state');
+  };
+  const setError = (msg = '') => {
+    errorEl.textContent = msg;
+    msg ? errorEl.setAttribute('data-state', 'error') : errorEl.removeAttribute('data-state');
+  };
+  const clearFieldErrors = () => {
+    for (const f of FIELDS) {
+      const input = form.elements.namedItem(f) as HTMLInputElement;
+      const err = document.getElementById(`err-${f}`)!;
+      input.removeAttribute('aria-invalid');
+      err.hidden = true;
+      err.textContent = '';
+    }
+  };
+  const showFieldErrors = (fields: Partial<Record<(typeof FIELDS)[number], string>>) => {
+    let first: HTMLInputElement | null = null;
+    for (const f of FIELDS) {
+      const msg = fields[f];
+      if (!msg) continue;
+      const input = form.elements.namedItem(f) as HTMLInputElement;
+      const err = document.getElementById(`err-${f}`)!;
+      input.setAttribute('aria-invalid', 'true');
+      err.textContent = msg;
+      err.hidden = false;
+      first ??= input;
+    }
+    first?.focus();
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearFieldErrors();
+    setError();
+    setStatus('');
+
+    // Validación del navegador (required, type=email, longitudes) con mensajes accesibles.
+    const local: Record<string, string> = {};
+    const v = (id: string) => (form.elements.namedItem(id) as HTMLInputElement).value.trim();
+    if (!v('nombre')) local.nombre = 'Escribí tu nombre.';
+    if (!v('email')) local.email = 'Escribí tu email.';
+    else if (!(form.elements.namedItem('email') as HTMLInputElement).validity.valid) local.email = 'Revisá el email: parece que no es válido.';
+    if (v('mensaje').length < 5) local.mensaje = 'Escribí tu mensaje (mínimo 5 caracteres).';
+    if (Object.keys(local).length) {
+      showFieldErrors(local);
+      setError('Revisá los campos marcados.');
+      return;
+    }
+
+    const fd = new FormData(form);
+    btn.disabled = true;
+    btn.setAttribute('aria-disabled', 'true');
+    setStatus('sending', 'Enviando tu mensaje…');
+
+    try {
+      const res = await fetch('/api/contacto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          nombre: fd.get('nombre'),
+          email: fd.get('email'),
+          mensaje: fd.get('mensaje'),
+          website: fd.get('website'),
+          turnstileToken: fd.get('cf-turnstile-response'),
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string; fields?: Record<string, string> };
+      if (res.ok && data.ok) {
+        form.reset();
+        setStatus('ok', '¡Gracias! Tu mensaje fue enviado.');
+      } else {
+        setStatus('');
+        if (res.status === 422 && data.fields) {
+          showFieldErrors(data.fields);
+          setError('Revisá los campos marcados.');
+        } else if (data.error === 'captcha') {
+          setError('No pudimos verificar que sos una persona. Probá de nuevo.');
+        } else {
+          setError('No pudimos enviar tu mensaje. Probá de nuevo en unos minutos.');
+        }
+      }
+    } catch {
+      setStatus('');
+      setError('No hay conexión con el servidor. Revisá tu internet y probá de nuevo.');
+    } finally {
+      btn.disabled = false;
+      btn.removeAttribute('aria-disabled');
+      window.turnstile?.reset();
+    }
+  });
+</script>

@@ -1,0 +1,24 @@
+---
+import Nav from './Nav.astro';
+import Icon from './Icon.astro';
+import { SITE_NAME, SITE_TAGLINE, SOCIAL, LICENSE } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <p class="footer-name">{SITE_NAME}</p>
+  <p class="footer-role">{SITE_TAGLINE}</p>
+  <ul class="social">
+    {SOCIAL.map((s) => (
+      <li>
+        <a href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${s.label} de ${SITE_NAME} (se abre en una pestaña nueva)`}>
+          <Icon name={s.id} />
+        </a>
+      </li>
+    ))}
+  </ul>
+  <Nav label="Pie de página" current={Astro.url.pathname} />
+  <p class="footer-small">
+    Copyright © {year} {SITE_NAME}<br />
+    <a rel="license noopener" href={LICENSE.href} target="_blank" title={LICENSE.name}>Licencia {LICENSE.short}</a>
+  </p>
+</footer>
