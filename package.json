@@ -13,7 +13,9 @@
     "check": "astro check",
     "verify": "node scripts/verify-urls.mjs",
     "cf:dev": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "test": "node --experimental-strip-types --no-warnings scripts/test-worker.mjs",
+    "typecheck:worker": "tsc --noEmit --strict --target es2022 --module esnext --moduleResolution bundler --lib es2022,dom --skipLibCheck --ignoreConfig src/worker.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
