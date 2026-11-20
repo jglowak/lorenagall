@@ -12,12 +12,14 @@ const { libro } = Astro.props;
 const [portada, ...extras] = libro.imagenes;
 const shareUrl = abs(Astro.url.pathname);
 const pink = libro.id === 'falsa-coral';
+// Ancho de la tapa en desktop (igual al original: Falsa coral 500px, Rapaz 545px).
+const coverW = pink ? '31.25rem' : '34rem';
 const art = pink ? (await getImage({ src: fondo, width: 560, format: 'webp' })).src : undefined;
 ---
 <div class:list={['book-hero', { 'book-hero--plain': !pink }]}>
-  <div class="wrap book-grid book-grid--center">
-    <div class:list={['book-cover', { 'book-cover--art': pink }]} style={art ? `--art:url(${art})` : undefined}>
-      <Image src={portada.src} alt={portada.alt} widths={[320, 480, 640]} sizes="(min-width: 56rem) 22rem, 90vw" loading="eager" fetchpriority="high" />
+  <div class:list={['wrap book-grid', { 'book-grid--center': pink }]}>
+    <div class:list={['book-cover', { 'book-cover--art': pink }]} style={`--cover-w:${coverW};${art ? `--art:url(${art});` : ''}`}>
+      <Image src={portada.src} alt={portada.alt} widths={[320, 480, 600]} sizes={`(min-width: 56rem) ${coverW}, 90vw`} loading="eager" fetchpriority="high" />
     </div>
     <div class="book-info">
       <h1>{libro.titulo}</h1>
