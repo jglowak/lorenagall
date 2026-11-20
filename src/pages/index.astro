@@ -2,12 +2,11 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { personLd, websiteLd } from '../lib/seo';
 import foto from '../assets/autora/lorena-gall.jpg';
 
-const description = 'Lorena Inés Gall nació en Santa Fe, Argentina, en 1976. Publicó las novelas Rapaz y Falsa coral, los libros para chicos El dragón sin fuego, Guiso de conejo y la nouvelle juvenil Hachazo.';
+const description = 'Lorena Inés Gall, escritora. Autora de las novelas Rapaz y Falsa coral y de los libros para chicos El dragón sin fuego, Guiso de conejo y Hachazo.';
 ---
-<Base title="Lorena Gall - Escritora" description={description} jsonLd={[websiteLd(), personLd()]}>
+<Base title="Lorena Gall - Escritora" description={description}>
   <div class="narrow page bio">
     <h1>Escritora</h1>
     <hr class="rule" />

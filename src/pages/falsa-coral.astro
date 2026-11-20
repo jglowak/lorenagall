@@ -5,7 +5,7 @@ import { falsaCoral } from '../data/libros';
 import { bookLd, ogImage } from '../lib/seo';
 
 const path = Astro.url.pathname;
-const description = 'Situada en Barcelona, Falsa coral cuenta la historia de Elena, una joven argentina que, en el año 2002, viaja a España, escapando de la crisis económica de su país.';
+const description = 'Falsa coral, novela de Lorena Gall: la historia de Elena, una joven argentina que en 2002 viaja a Barcelona escapando de la crisis económica.';
 const img = falsaCoral.imagenes[0];
 const og = await ogImage(img.src, img.alt);
 ---

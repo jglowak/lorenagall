@@ -5,7 +5,7 @@ import { rapaz } from '../data/libros';
 import { bookLd, ogImage } from '../lib/seo';
 
 const path = Astro.url.pathname;
-const description = 'Rapaz, la primera novela de Lorena Gall, cuenta la relación entre Magdalena, una odontóloga de 39 años, y Ezequiel, un albañil de 22, y los problemas que surgen entre los dos.';
+const description = 'Rapaz, la primera novela de Lorena Gall, cuenta la relación entre Magdalena, una odontóloga de 39 años, y Ezequiel, un albañil de 22.';
 const img = rapaz.imagenes[0];
 const og = await ogImage(img.src, img.alt);
 ---

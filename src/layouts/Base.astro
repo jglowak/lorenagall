@@ -4,8 +4,10 @@ import { NOINDEX, PUBLIC_CF_ANALYTICS_TOKEN } from 'astro:env/client';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_NAME } from '../data/site';
-import { abs, ogImage } from '../lib/seo';
+import { abs, ogImage, personLd, websiteLd } from '../lib/seo';
 import defaultOg from '../assets/og-default.jpg';
+import poppins400 from '@fontsource/poppins/files/poppins-latin-400-normal.woff2?url';
+import playfair from '@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2?url';
 
 interface Props {
   title: string;
@@ -22,8 +24,11 @@ interface Props {
 const { title, description, image, type = 'website', noindex = false, publishedTime, jsonLd = [] } = Astro.props;
 
 const canonical = abs(Astro.url.pathname);
+// Meta description: máx. ~160 caracteres, cortada en límite de palabra.
+const metaDescription = description.length <= 160 ? description : description.slice(0, 157).replace(/\s+\S*$/, '') + '…';
 const og = image ? await ogImage(image.src, image.alt) : await ogImage(defaultOg, 'Lorena Gall, escritora');
-const graph = jsonLd.length ? { '@context': 'https://schema.org', '@graph': jsonLd } : null;
+// WebSite y Person van en todas las páginas: los @id referenciados por Book/Review siempre existen.
+const graph = { '@context': 'https://schema.org', '@graph': [websiteLd(), personLd(), ...jsonLd] };
 ---
 <!doctype html>
 <html lang="es-AR">
@@ -31,8 +36,8 @@ const graph = jsonLd.length ? { '@context': 'https://schema.org', '@graph': json
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
+    <meta name="description" content={metaDescription} />
+    {!noindex && <link rel="canonical" href={canonical} />}
     <meta name="robots" content={NOINDEX || noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
     <meta name="theme-color" content="#000000" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
@@ -44,7 +49,7 @@ const graph = jsonLd.length ? { '@context': 'https://schema.org', '@graph': json
     <meta property="og:locale" content="es_AR" />
     <meta property="og:type" content={type} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={metaDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={og.url} />
     <meta property="og:image:width" content={String(og.width)} />
@@ -53,12 +58,14 @@ const graph = jsonLd.length ? { '@context': 'https://schema.org', '@graph': json
     {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={metaDescription} />
     <meta name="twitter:image" content={og.url} />
     <meta name="twitter:image:alt" content={og.alt} />
 
-    {graph && <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />}
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    <link rel="preload" href={poppins400} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={playfair} as="font" type="font/woff2" crossorigin />
     <slot name="head" />
   </head>
   <body>
