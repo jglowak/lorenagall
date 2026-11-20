@@ -269,3 +269,7 @@ a:hover { color: var(--link-hover); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+/* Targets táctiles del byline */
+.byline li { min-height: var(--tap); }
+.byline a { display: inline-flex; align-items: center; min-height: var(--tap); }
