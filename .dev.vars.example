@@ -1,0 +1,16 @@
+# Variables de RUNTIME del Worker para `wrangler dev` (copiar a .dev.vars; está en .gitignore).
+# En producción se cargan en el dashboard de Cloudflare (Settings > Variables and secrets).
+
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxx
+
+# PRUEBAS (dominio sin verificar en Resend): remitente de prueba y TU email.
+# Resend con onboarding@resend.dev solo entrega al email dueño de la cuenta de Resend.
+CONTACT_FROM=onboarding@resend.dev
+CONTACT_TO=tu-email@ejemplo.com
+
+# FINAL (cuando contacto@lorenagall.com.ar esté verificado en Resend):
+# CONTACT_FROM="Web Lorena Gall <contacto@lorenagall.com.ar>"
+# CONTACT_TO=<casilla de la autora>
+
+# Turnstile: secret de prueba que siempre aprueba (en producción, el secret real).
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA

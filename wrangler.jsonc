@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lorenagall",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // Solo /api/* pasa primero por el Worker; el resto lo sirven directo los assets.
+    "run_worker_first": ["/api/*"]
+  },
+  // Las variables y secrets (RESEND_API_KEY, CONTACT_TO, CONTACT_FROM, TURNSTILE_SECRET)
+  // se cargan en el dashboard de Cloudflare, no en el repo. keep_vars evita que cada
+  // deploy las borre.
+  "keep_vars": true,
+  "observability": { "enabled": true }
+}
